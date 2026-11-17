@@ -7,7 +7,7 @@ import {
 } from "@assistant-ui/react-google-adk";
 import { Thread } from "@/components/assistant-ui/elements/thread.aui";
 
-const ADK_API_URL = "http://localhost:8080";
+const ADK_API_URL = "/api/adk";
 const ADK_APP_NAME = "app";
 const ADK_USER_ID = "user-1";
 

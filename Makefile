@@ -5,7 +5,7 @@ AGENT_DIR := agents/chat-assistant
 WEB_DIR := web
 TF_VARS := vars/env.tfvars
 
-.PHONY: help infra-init infra-plan infra sync-metadata deploy-agent deploy-status deploy-all dev-agent dev-web
+.PHONY: help infra-init infra-plan infra sync-metadata deploy-agent deploy-web deploy-status deploy-all dev-agent dev-web
 
 help: ## Muestra los comandos disponibles
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -36,13 +36,17 @@ sync-metadata: ## Sincroniza el agent_runtime_resource_name de Terraform hacia d
 deploy-agent: sync-metadata ## Empaqueta y despliega el agente chat-assistant en Agent Runtime
 	cd $(AGENT_DIR) && agents-cli deploy --project $(PROJECT_ID) --region $(REGION) --no-confirm-project
 
-deploy-web: sync-metadata ## Empaqueta y despliega el agente chat-assistant en Agent Runtime
+deploy-web: ## Configura secretos de GCP en Cloudflare y despliega web/
+	@API_URL=$$(terraform -chdir=$(INFRA_DIR) output -raw agent_runtime_api_url); \
+	cd $(WEB_DIR) && printf "%s" "$$API_URL" | npx wrangler secret put AGENT_RUNTIME_API_URL
+	@terraform -chdir=$(INFRA_DIR) output -raw web_caller_sa_key_json | \
+		(cd $(WEB_DIR) && npx wrangler secret put GCP_SA_KEY_JSON)
 	cd $(WEB_DIR) && pnpm run deploy
 
 deploy-status: ## Consulta el estado de un despliegue en curso en Agent Runtime
 	cd $(AGENT_DIR) && agents-cli deploy --status
 
-deploy-all: infra deploy-agent ## Aprovisiona la infraestructura con Terraform y despliega el agente
+deploy-all: infra deploy-agent deploy-web ## Aprovisiona la infraestructura, despliega el agente y despliega web/
 
 dev-agent: ## Ejecuta el playground local del agente
 	cd $(AGENT_DIR) && agents-cli playground

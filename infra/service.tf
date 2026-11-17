@@ -26,7 +26,6 @@ resource "google_vertex_ai_reasoning_engine" "app" {
 
   spec {
     agent_framework = var.agent_framework
-    service_account = ""
     identity_type   = "AGENT_IDENTITY"
 
     deployment_spec {
@@ -116,10 +115,7 @@ resource "google_vertex_ai_reasoning_engine" "app" {
   # agents-cli deploy also writes the A2A agent card, which Agent Registry reads.
   lifecycle {
     ignore_changes = [
-      spec[0].container_spec,
-      spec[0].source_code_spec,
-      spec[0].deployment_spec,
-      spec[0].agent_card,
+      spec,
     ]
   }
 

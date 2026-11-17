@@ -1,0 +1,29 @@
+# Terraform
+**/.terraform/*
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Variables locales / secretos
+.env
+*.tfvars
+!infra/vars/env.tfvars
+
+# Metadata de despliegue por instancia
+agents/*/deployment_metadata.json
+agents/*/deployment_metadata.json.lock
+
+# Python / entornos virtuales sueltos
+**/.venv/
+**/__pycache__/
+
+# Sistema / IDEs
+.DS_Store

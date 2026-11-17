@@ -1,8 +1,6 @@
-
-
 export async function Dashboard() {
   
-
+  
   return (
     <>
       <section class="assistant-panel">

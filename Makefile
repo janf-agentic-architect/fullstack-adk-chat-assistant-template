@@ -36,6 +36,9 @@ sync-metadata: ## Sincroniza el agent_runtime_resource_name de Terraform hacia d
 deploy-agent: sync-metadata ## Empaqueta y despliega el agente chat-assistant en Agent Runtime
 	cd $(AGENT_DIR) && agents-cli deploy --project $(PROJECT_ID) --region $(REGION) --no-confirm-project
 
+deploy-web: sync-metadata ## Empaqueta y despliega el agente chat-assistant en Agent Runtime
+	cd $(WEB_DIR) && pnpm run deploy
+
 deploy-status: ## Consulta el estado de un despliegue en curso en Agent Runtime
 	cd $(AGENT_DIR) && agents-cli deploy --status
 

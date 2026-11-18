@@ -12,18 +12,18 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# Variables locales / secretos
+# Local variables / secrets
 .env
 *.tfvars
 !infra/vars/env.tfvars
 
-# Metadata de despliegue por instancia
+# Per-instance deployment metadata
 agents/*/deployment_metadata.json
 agents/*/deployment_metadata.json.lock
 
-# Python / entornos virtuales sueltos
+# Python / virtual environments
 **/.venv/
 **/__pycache__/
 
-# Sistema / IDEs
+# System / IDEs
 .DS_Store

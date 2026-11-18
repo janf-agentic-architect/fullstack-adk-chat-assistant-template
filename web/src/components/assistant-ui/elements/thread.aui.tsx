@@ -10,7 +10,7 @@ export function Thread() {
     <ThreadPrimitive.Root className="aui-thread-root">
       <ThreadPrimitive.Viewport className="aui-thread-viewport">
         <ThreadPrimitive.Empty>
-          <p className="aui-empty">¡Hola! ¿En qué puedo ayudarte hoy?</p>
+          <p className="aui-empty">Hello! How can I help you today?</p>
         </ThreadPrimitive.Empty>
 
         <ThreadPrimitive.Messages
@@ -23,11 +23,11 @@ export function Thread() {
 
       <ComposerPrimitive.Root className="aui-composer-root">
         <ComposerPrimitive.Input
-          placeholder="Escribe un mensaje..."
+          placeholder="Type a message..."
           className="aui-composer-input"
         />
         <ComposerPrimitive.Send className="aui-composer-send">
-          Enviar
+          Send
         </ComposerPrimitive.Send>
       </ComposerPrimitive.Root>
     </ThreadPrimitive.Root>

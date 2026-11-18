@@ -64,7 +64,7 @@ resource "google_storage_bucket_iam_member" "agent_identity_logs_bucket" {
   member = "principal://${google_vertex_ai_reasoning_engine.app.spec[0].effective_identity}"
 }
 
-# Service Account dedicada para que el Cloudflare Worker invoque el Agent Runtime
+# Dedicated Service Account for the Cloudflare Worker to invoke the Agent Runtime
 resource "google_service_account" "web_caller" {
   account_id   = "${var.project_name}-web-caller"
   display_name = "Cloudflare Worker caller for ${var.project_name}"

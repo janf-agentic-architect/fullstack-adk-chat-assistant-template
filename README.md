@@ -2,6 +2,8 @@
 
 A production-ready fullstack template for developing, testing, and deploying conversational agents powered by **Google ADK (Agent Development Kit)** and **Gemini**, integrated with a modern web interface built in **React + @assistant-ui** deployable to **Cloudflare Workers**, and Infrastructure as Code with **Terraform** on **Google Cloud Platform (GCP)**.
 
+🔗 **Live Demo:** [https://chat-assistant-web.janf-agentic-architect.workers.dev/](https://chat-assistant-web.janf-agentic-architect.workers.dev/)
+
 ---
 
 ## 🏛️ Architecture Overview

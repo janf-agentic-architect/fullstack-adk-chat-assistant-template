@@ -57,7 +57,7 @@ resource "google_vertex_ai_reasoning_engine" "app" {
 
       env {
         name  = "OTEL_SERVICE_NAME"
-        value = "chat-assistant"
+        value = var.project_name
       }
 
       # Prompt/response content capture, off by default. Go: set "true" to log

@@ -13,7 +13,7 @@ const app = new Hono<{ Bindings: Bindings }>()
 app.all('/api/adk/*', async (c) => {
   const url = new URL(c.req.url)
   const subPath = url.pathname.replace(/^\/api\/adk/, '')
-  const baseUrl = (c.env?.AGENT_RUNTIME_API_URL || 'http://localhost:8000').replace(/\/$/, '')
+  const baseUrl = (c.env?.AGENT_RUNTIME_API_URL || 'http://localhost:8080').replace(/\/$/, '')
   const targetUrl = `${baseUrl}${subPath}${url.search}`
 
   const headers = new Headers()

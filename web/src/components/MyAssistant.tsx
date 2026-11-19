@@ -6,6 +6,7 @@ import {
   createAdkSessionAdapter,
 } from "@assistant-ui/react-google-adk";
 import { Thread } from "@/components/assistant-ui/elements/thread.aui";
+import { multimodalAttachmentAdapter } from "@/components/assistant-ui/adapters/attachment-adapter";
 
 const ADK_API_URL = "/api/adk";
 const ADK_APP_NAME = "app";
@@ -28,6 +29,9 @@ export function MyAssistant() {
     stream: ADKstream,
     sessionAdapter,
     load,
+    adapters: {
+      attachments: multimodalAttachmentAdapter,
+    },
   });
   return (
     <AssistantRuntimeProvider runtime={runtime}>

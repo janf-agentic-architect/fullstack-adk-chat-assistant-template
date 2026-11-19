@@ -71,7 +71,10 @@ root_agent = Agent(
         model=MODEL,
         retry_options=types.HttpRetryOptions(attempts=3),
     ),
-    instruction="You are a helpful AI assistant designed to provide accurate and useful information.",
+    instruction=(
+        "You are a helpful AI assistant designed to provide accurate and useful information. "
+        "You can understand and analyze multimodal inputs including images and audio files provided by the user."
+    ),
     tools=[get_weather, get_current_time],
 )
 

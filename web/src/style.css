@@ -77,10 +77,153 @@ body {
 
 .aui-composer-root {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
   padding: 1rem;
   border-top: 1px solid #e5e7eb;
   background-color: #ffffff;
+}
+
+.aui-composer-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+}
+
+.aui-composer-attach {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.aui-composer-attach:hover {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.aui-composer-attachments-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.aui-attachment-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.65rem;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  color: #374151;
+  max-width: 250px;
+}
+
+.aui-attachment-thumb {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background-color: #e5e7eb;
+  color: #4b5563;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+}
+
+.aui-attachment-info {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.aui-attachment-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aui-attachment-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.aui-attachment-remove:hover {
+  color: #ef4444;
+  background-color: #fee2e2;
+}
+
+.aui-message-attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.aui-message-attachment-image-container {
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.aui-attachment-img {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 0.5rem;
+  display: block;
+  object-fit: cover;
+}
+
+.aui-message-attachment-audio-container {
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  min-width: 240px;
+}
+
+.aui-audio-header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.aui-audio-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aui-audio-player {
+  width: 100%;
+  height: 36px;
+  border-radius: 0.35rem;
+}
+
+.aui-message-attachment-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 0.35rem;
 }
 
 .aui-composer-input {

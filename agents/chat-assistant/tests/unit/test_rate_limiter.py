@@ -45,7 +45,7 @@ async def test_in_memory_rate_limiter_blocks_after_limit():
 async def test_redis_rate_limiter_flow():
     plugin = UpstashRateLimitPlugin(
         max_requests=2,
-        window_seconds=60,
+        window_seconds=86400,
         url="https://mock.upstash.io",
         token="mock_token",
     )
@@ -64,7 +64,7 @@ async def test_redis_rate_limiter_flow():
         callback_context=mock_context, llm_request=mock_request
     )
     assert res1 is None
-    mock_redis.expire.assert_awaited_once_with("ratelimit:user_redis", 60)
+    mock_redis.expire.assert_awaited_once_with("ratelimit:user_redis", 86400)
 
     # 2nd call: count = 2
     mock_redis.incr.return_value = 2
@@ -73,11 +73,12 @@ async def test_redis_rate_limiter_flow():
     )
     assert res2 is None
 
-    # 3rd call: count = 3 -> Exceeded
+    # 3rd call: count = 3 -> Exceeded (TTL 7200s -> 2h 0m)
     mock_redis.incr.return_value = 3
-    mock_redis.ttl.return_value = 45
+    mock_redis.ttl.return_value = 7200
     res3 = await plugin.before_model_callback(
         callback_context=mock_context, llm_request=mock_request
     )
     assert res3 is not None
-    assert "45 segundos" in res3.content.parts[0].text
+    assert "límite diario de 2 mensajes" in res3.content.parts[0].text
+    assert "2h 0m" in res3.content.parts[0].text

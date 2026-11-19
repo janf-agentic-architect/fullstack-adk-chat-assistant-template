@@ -20,6 +20,7 @@ terraform.rc
 # Per-instance deployment metadata
 agents/*/deployment_metadata.json
 agents/*/deployment_metadata.json.lock
+**/.secrets_args
 
 # Python / virtual environments
 **/.venv/

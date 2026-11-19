@@ -76,8 +76,8 @@ root_agent = Agent(
 )
 
 rate_limiter = UpstashRateLimitPlugin(
-    max_requests=int(os.getenv("RATE_LIMIT_MAX_REQUESTS", "5")),
-    window_seconds=int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60")),
+    max_requests=int(os.getenv("RATE_LIMIT_MAX_REQUESTS", "50")),
+    window_seconds=int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "86400")),
 )
 
 app = App(

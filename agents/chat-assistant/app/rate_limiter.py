@@ -24,8 +24,8 @@ class UpstashRateLimitPlugin(BasePlugin):
     def __init__(
         self,
         name: str = "upstash_rate_limiter",
-        max_requests: int = 5,
-        window_seconds: int = 60,
+        max_requests: int = 50,
+        window_seconds: int = 86400,
         url: str | None = None,
         token: str | None = None,
     ):
@@ -91,15 +91,32 @@ class UpstashRateLimitPlugin(BasePlugin):
         self._in_memory_requests[user_id].append(now)
         return None
 
+    def _format_remaining_time(self, seconds: int) -> str:
+        if seconds >= 3600:
+            hours = seconds // 3600
+            minutes = (seconds % 3600) // 60
+            return f"{hours}h {minutes}m"
+        elif seconds >= 60:
+            minutes = seconds // 60
+            secs = seconds % 60
+            return f"{minutes}m {secs}s"
+        return f"{seconds} segundos"
+
     def _build_rate_limit_response(self, remaining_time: int) -> LlmResponse:
+        period_str = (
+            "diario de"
+            if self.window_seconds >= 86400
+            else ("por hora de" if self.window_seconds >= 3600 else "de")
+        )
+        time_str = self._format_remaining_time(remaining_time)
         return LlmResponse(
             content=types.Content(
                 role="model",
                 parts=[
                     types.Part.from_text(
                         text=(
-                            f"⏳ Has superado el límite de {self.max_requests} mensajes por minuto. "
-                            f"Por favor espera {remaining_time} segundos antes de enviar otro mensaje."
+                            f"⏳ Has superado el límite {period_str} {self.max_requests} mensajes. "
+                            f"Por favor espera {time_str} antes de enviar otro mensaje."
                         )
                     )
                 ],

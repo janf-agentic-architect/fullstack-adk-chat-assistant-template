@@ -23,6 +23,9 @@ class Settings:
     # Meta / WhatsApp Cloud API credentials
     WHATSAPP_TOKEN: str = os.getenv("WHATSAPP_TOKEN") or os.getenv("WHATSAPP_ACCESS_TOKEN", "")
     WHATSAPP_PHONE_NUMBER_ID: str = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "")
+    WHATSAPP_BUSINESS_ACCOUNT_ID: str = os.getenv("WHATSAPP_BUSINESS_ACCOUNT_ID") or os.getenv("WHATSAPP_WABA_ID", "")
+    WHATSAPP_BOT_PHONE_NUMBER: str = os.getenv("WHATSAPP_BOT_PHONE_NUMBER", os.getenv("WHATSAPP_TEST_PHONE_NUMBER", ""))
+    WHATSAPP_TEST_RECIPIENT_PHONE_NUMBER: str = os.getenv("WHATSAPP_TEST_RECIPIENT_PHONE_NUMBER", "")
     WHATSAPP_VERIFY_TOKEN: str = os.getenv("WHATSAPP_VERIFY_TOKEN", "")
     WHATSAPP_APP_SECRET: str = os.getenv("WHATSAPP_APP_SECRET", "")
     WHATSAPP_API_VERSION: str = os.getenv("WHATSAPP_API_VERSION", "v25.0")

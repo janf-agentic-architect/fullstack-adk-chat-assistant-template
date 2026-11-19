@@ -30,6 +30,19 @@ app.include_router(router)
 app.include_router(router, prefix="/whatsapp")
 
 
+@app.get("/")
+async def root():
+    """Root endpoint for basic sanity check."""
+    return {
+        "service": "ADK WhatsApp Channel",
+        "status": "running",
+        "endpoints": {
+            "health": "/health",
+            "webhook": "/webhook",
+        },
+    }
+
+
 @app.get("/health")
 async def health_check():
     """Healthcheck endpoint."""

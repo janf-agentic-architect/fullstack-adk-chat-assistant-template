@@ -7,7 +7,11 @@ CHANNELS_DIR := channels
 WHATSAPP_PORT := 8001
 TF_VARS := vars/env.tfvars
 
-.PHONY: help infra-init infra-plan infra sync-metadata sync-secrets deploy-agent deploy-web deploy-status deploy-all dev-agent dev-web dev-whatsapp tunnel-whatsapp dev-whatsapp-tunnel rename
+PROJECT_NAME ?= $(shell grep 'project_name' $(INFRA_DIR)/vars/env.tfvars 2>/dev/null | cut -d '"' -f 2 || echo "chat-assistant")
+WHATSAPP_SERVICE_NAME := $(PROJECT_NAME)-whatsapp
+WHATSAPP_IMAGE_TAG := $(REGION)-docker.pkg.dev/$(PROJECT_ID)/$(WHATSAPP_SERVICE_NAME)/webhook:latest
+
+.PHONY: help infra-init infra-plan infra sync-metadata sync-secrets sync-whatsapp-secrets build-whatsapp deploy-whatsapp deploy-agent deploy-web deploy-status deploy-all dev-agent dev-web dev-whatsapp tunnel-whatsapp dev-whatsapp-tunnel rename
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -58,6 +62,28 @@ deploy-web: ## Install dependencies if missing, deploy web/, and configure GCP s
 	cd $(WEB_DIR) && printf "%s" "$$API_URL" | npx wrangler secret put AGENT_RUNTIME_API_URL
 	@terraform -chdir=$(INFRA_DIR) output -raw web_caller_sa_key_json | \
 		(cd $(WEB_DIR) && npx wrangler secret put GCP_SA_KEY_JSON)
+
+WHATSAPP_SECRETS_FILE := $(CHANNELS_DIR)/.secrets_args
+
+sync-whatsapp-secrets: ## Sync WhatsApp credentials from channels/whatsapp/.env into GCP Secret Manager
+	@python3 $(INFRA_DIR)/sync_secrets.py $(CHANNELS_DIR)/whatsapp/.env $(PROJECT_ID) $(WHATSAPP_SECRETS_FILE)
+
+build-whatsapp: ## Build and push WhatsApp webhook container image to Artifact Registry
+	@echo "Building WhatsApp container image via Cloud Build..."
+	gcloud builds submit $(CHANNELS_DIR) --tag $(WHATSAPP_IMAGE_TAG) --project $(PROJECT_ID)
+
+deploy-whatsapp: sync-whatsapp-secrets build-whatsapp ## Build, sync secrets, and deploy WhatsApp webhook to Cloud Run
+	@echo "Deploying WhatsApp service to Cloud Run..."
+	gcloud run deploy $(WHATSAPP_SERVICE_NAME) \
+		--image $(WHATSAPP_IMAGE_TAG) \
+		--region $(REGION) \
+		--project $(PROJECT_ID)
+	@echo "✓ WhatsApp webhook successfully deployed to Cloud Run!"
+	@echo "Webhook Callback URL:"
+	@terraform -chdir=$(INFRA_DIR) output -raw whatsapp_webhook_url 2>/dev/null || gcloud run services describe $(WHATSAPP_SERVICE_NAME) --region $(REGION) --project $(PROJECT_ID) --format 'value(status.url)'/webhooks/whatsapp
+
+subscribe-whatsapp-waba: ## Link WhatsApp Business Account (WABA) to Meta App webhooks
+	@cd $(CHANNELS_DIR) && uv run python -m whatsapp.subscribe_waba
 
 deploy-status: ## Check the status of an ongoing deployment in Agent Runtime
 	cd $(AGENT_DIR) && agents-cli deploy --status

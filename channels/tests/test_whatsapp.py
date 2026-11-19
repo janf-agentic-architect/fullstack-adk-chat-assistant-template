@@ -193,3 +193,24 @@ def test_whatsapp_client_api_version_v25():
     assert client_25_raw.base_url == "https://graph.facebook.com/v25.0"
 
 
+def test_adk_client_auth_headers_local():
+    adk = AdkAgentClient(base_url="http://localhost:8000")
+    assert adk._get_auth_headers() == {}
+
+
+def test_adk_client_auth_headers_remote_with_mock(monkeypatch):
+    class MockCredentials:
+        valid = True
+        token = "test_gcp_bearer_token"
+
+        def refresh(self, request):
+            pass
+
+    import google.auth
+    monkeypatch.setattr(google.auth, "default", lambda scopes: (MockCredentials(), "test-project"))
+
+    adk = AdkAgentClient(base_url="https://us-east1-aiplatform.googleapis.com/reasoningEngines/v1/projects/123/locations/us-east1/reasoningEngines/456/api")
+    headers = adk._get_auth_headers()
+    assert headers.get("Authorization") == "Bearer test_gcp_bearer_token"
+
+

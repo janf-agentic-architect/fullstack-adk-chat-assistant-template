@@ -19,7 +19,7 @@ service = WhatsAppService()
 def verify_signature(raw_body: bytes, signature_header: Optional[str]) -> bool:
     """Verify X-Hub-Signature-256 header using WHATSAPP_APP_SECRET."""
     secret = (settings.WHATSAPP_APP_SECRET or "").strip()
-    if not secret or secret.startswith("opcional"):
+    if not secret or secret.startswith("opcional") or "placeholder" in secret.lower():
         # If secret is not set or is a placeholder, skip signature check
         return True
 

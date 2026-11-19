@@ -76,57 +76,65 @@ export function Thread() {
 function UserMessage() {
   return (
     <MessagePrimitive.Root className="aui-message aui-message-user">
-      <MessagePrimitive.Attachments className="aui-message-attachments">
-        {({ attachment }) => {
-          if (attachment.type === "image") {
-            const imagePart = attachment.content?.find((p) => p.type === "image");
-            if (imagePart && "image" in imagePart && imagePart.image) {
-              return (
-                <div key={attachment.id} className="aui-message-attachment-image-container">
-                  <img
-                    src={(imagePart as any).image}
-                    alt={attachment.name}
-                    className="aui-attachment-img"
-                  />
-                </div>
-              );
-            }
+      <MessagePrimitive.Parts>
+        {({ part }) => {
+          if (part.type === "text") {
+            return part.text ? <p className="aui-message-text">{part.text}</p> : null;
           }
 
-          const filePart = attachment.content?.find(
-            (p) => p.type === "file" || p.type === "audio"
-          );
-          const isAudio =
-            attachment.contentType?.startsWith("audio/") ||
-            (filePart &&
-              "mimeType" in filePart &&
-              (filePart as any).mimeType?.startsWith("audio/")) ||
-            /\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(attachment.name);
-
-          if (isAudio && filePart && "data" in filePart) {
+          if (part.type === "image") {
+            const filename = (part as any).filename;
+            const imgSrc = (part as any).image;
             return (
-              <div key={attachment.id} className="aui-message-attachment-audio-container">
-                <div className="aui-audio-header">
-                  <span>🎵</span>
-                  <span className="aui-audio-name">{attachment.name}</span>
+              <div className="aui-message-image-card">
+                <div className="aui-message-image-header">
+                  <span className="aui-message-image-icon">🖼️</span>
+                  <span className="aui-message-image-name">
+                    {filename || "Imagen adjunta"}
+                  </span>
                 </div>
-                <audio
-                  controls
-                  src={(filePart as any).data}
-                  className="aui-audio-player"
-                />
+                <div className="aui-message-image-wrapper">
+                  <img
+                    src={imgSrc}
+                    alt={filename || "Imagen enviada"}
+                    className="aui-message-img"
+                  />
+                </div>
               </div>
             );
           }
 
-          return (
-            <div key={attachment.id} className="aui-message-attachment-file">
-              📎 <span>{attachment.name}</span>
-            </div>
-          );
+          if (part.type === "file") {
+            const filename = (part as any).filename || "Archivo";
+            const isAudio =
+              part.mimeType?.startsWith("audio/") ||
+              /\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(filename);
+
+            if (isAudio) {
+              const audioSrc = (part as any).data?.startsWith("data:")
+                ? (part as any).data
+                : `data:${part.mimeType || "audio/mpeg"};base64,${(part as any).data}`;
+              return (
+                <div className="aui-message-attachment-audio-container">
+                  <div className="aui-audio-header">
+                    <span>🎵</span>
+                    <span className="aui-audio-name">{filename}</span>
+                  </div>
+                  <audio controls src={audioSrc} className="aui-audio-player" />
+                </div>
+              );
+            }
+
+            return (
+              <div className="aui-message-attachment-file">
+                📎 <span>{filename}</span>
+              </div>
+            );
+          }
+
+          return null;
         }}
-      </MessagePrimitive.Attachments>
-      <MessagePrimitive.Parts />
+      </MessagePrimitive.Parts>
     </MessagePrimitive.Root>
   );
 }

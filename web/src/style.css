@@ -56,9 +56,12 @@ body {
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
   max-width: 80%;
+  min-width: 0;
   line-height: 1.45;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
 }
 
 .aui-message-user {
@@ -73,6 +76,82 @@ body {
   background-color: #f3f4f6;
   color: #111827;
   border-bottom-left-radius: 0.25rem;
+}
+
+.aui-message-text {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.aui-message-image-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-width: 100%;
+}
+
+.aui-message-image-card + .aui-message-text,
+.aui-message-text + .aui-message-image-card {
+  margin-top: 0.5rem;
+}
+
+.aui-message-image-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aui-message-user .aui-message-image-header {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.aui-message-assistant .aui-message-image-header {
+  color: #4b5563;
+}
+
+.aui-message-image-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aui-message-image-wrapper {
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+}
+
+.aui-message-user .aui-message-image-wrapper {
+  background-color: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.aui-message-assistant .aui-message-image-wrapper {
+  background-color: #e5e7eb;
+  border: 1px solid #d1d5db;
+}
+
+.aui-message-img,
+.aui-message img,
+.aui-attachment-img {
+  max-width: 100%;
+  max-height: 280px;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  display: block;
 }
 
 .aui-composer-root {
@@ -193,7 +272,13 @@ body {
   padding: 0.5rem;
   border-radius: 0.5rem;
   width: 100%;
-  min-width: 240px;
+  max-width: 320px;
+  box-sizing: border-box;
+}
+
+.aui-audio-assistant {
+  background-color: #e5e7eb;
+  color: #111827;
 }
 
 .aui-audio-header {
@@ -224,6 +309,15 @@ body {
   padding: 0.25rem 0.5rem;
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 0.35rem;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.aui-file-assistant {
+  background-color: #e5e7eb;
+  color: #111827;
 }
 
 .aui-composer-input {

@@ -5,7 +5,7 @@ AGENT_DIR := agents/chat-assistant
 WEB_DIR := web
 TF_VARS := vars/env.tfvars
 
-.PHONY: help infra-init infra-plan infra sync-metadata deploy-agent deploy-web deploy-status deploy-all dev-agent dev-web rename
+.PHONY: help infra-init infra-plan infra sync-metadata sync-secrets deploy-agent deploy-web deploy-status deploy-all dev-agent dev-web rename
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -33,8 +33,29 @@ sync-metadata: ## Sync agent_runtime_resource_name from Terraform to deployment_
 		echo "⚠️  No agent_runtime_resource_name output found in Terraform."; \
 	fi
 
-deploy-agent: sync-metadata ## Package and deploy chat-assistant agent to Agent Runtime
-	cd $(AGENT_DIR) && agents-cli deploy --project $(PROJECT_ID) --region $(REGION) --no-confirm-project
+sync-secrets: ## Sync Upstash secrets from $(AGENT_DIR)/.env into GCP Secret Manager
+	@if [ -f $(AGENT_DIR)/.env ]; then \
+		URL=$$(grep -E '^UPSTASH_REDIS_REST_URL=' $(AGENT_DIR)/.env | head -n 1 | cut -d '=' -f2- | tr -d '"' | tr -d "'"); \
+		TOKEN=$$(grep -E '^UPSTASH_REDIS_REST_TOKEN=' $(AGENT_DIR)/.env | head -n 1 | cut -d '=' -f2- | tr -d '"' | tr -d "'"); \
+		if [ -n "$$URL" ]; then \
+			echo "Syncing upstash-redis-url to GCP Secret Manager..."; \
+			printf "%s" "$$URL" | gcloud secrets versions add upstash-redis-url --data-file=- --project=$(PROJECT_ID) 2>/dev/null || \
+			(gcloud secrets create upstash-redis-url --data-file=- --replication-policy=automatic --project=$(PROJECT_ID) 2>/dev/null && printf "%s" "$$URL" | gcloud secrets versions add upstash-redis-url --data-file=- --project=$(PROJECT_ID) 2>/dev/null || true); \
+		fi; \
+		if [ -n "$$TOKEN" ]; then \
+			echo "Syncing upstash-redis-token to GCP Secret Manager..."; \
+			printf "%s" "$$TOKEN" | gcloud secrets versions add upstash-redis-token --data-file=- --project=$(PROJECT_ID) 2>/dev/null || \
+			(gcloud secrets create upstash-redis-token --data-file=- --replication-policy=automatic --project=$(PROJECT_ID) 2>/dev/null && printf "%s" "$$TOKEN" | gcloud secrets versions add upstash-redis-token --data-file=- --project=$(PROJECT_ID) 2>/dev/null || true); \
+		fi; \
+		echo "✓ Upstash secrets synced to GCP Secret Manager"; \
+	fi
+
+deploy-agent: sync-metadata sync-secrets ## Package and deploy chat-assistant agent to Agent Runtime
+	cd $(AGENT_DIR) && agents-cli deploy \
+		--project $(PROJECT_ID) \
+		--region $(REGION) \
+		--no-confirm-project \
+		--secrets "UPSTASH_REDIS_REST_URL=upstash-redis-url,UPSTASH_REDIS_REST_TOKEN=upstash-redis-token"
 
 deploy-web: ## Install dependencies if missing, deploy web/, and configure GCP secrets in Cloudflare
 	@[ -d $(WEB_DIR)/node_modules ] || (cd $(WEB_DIR) && pnpm install)

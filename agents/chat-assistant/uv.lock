@@ -403,6 +403,7 @@ dependencies = [
     { name = "google-cloud-logging" },
     { name = "opentelemetry-resourcedetector-gcp" },
     { name = "protobuf" },
+    { name = "upstash-redis" },
 ]
 
 [package.optional-dependencies]
@@ -440,6 +441,7 @@ requires-dist = [
     { name = "protobuf", specifier = ">=6.31.1,<7.0.0" },
     { name = "ruff", marker = "extra == 'lint'", specifier = ">=0.4.6,<1.0.0" },
     { name = "ty", marker = "extra == 'lint'", specifier = ">=0.0.1a0" },
+    { name = "upstash-redis", specifier = ">=1.9.0" },
 ]
 provides-extras = ["eval", "lint"]
 
@@ -3518,6 +3520,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7a/29/6a1391d31cd00ff9e927215a224a880e1e84e826b64ba80a499e51c074d8/tzdata-2026.6.tar.gz", hash = "sha256:85d2cd9c09f81f0bb29db27759fc83af4f1e620efb814f8c5bf8b4cc4feece6d", size = 201017, upload-time = "2026-10-28T09:57:09.137Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0a/66/9a06c2227fedfd4919f0eaaa8b94377d9730882a7e4f95823c9a331ab5e1/tzdata-2026.6-py2.py3-none-any.whl", hash = "sha256:0a10eec6e13ef16b627fabed9a5f2ba61a62b1c67f327305f4e7e412a70b4aec", size = 348210, upload-time = "2026-10-28T09:57:07.276Z" },
+]
+
+[[package]]
+name = "upstash-redis"
+version = "1.9.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ac/d2/4ef68e114c499531b19199016480b0d439b62f8dfff047852123b90e9613/upstash_redis-1.9.0.tar.gz", hash = "sha256:a970603791101271ad30eaa9e68de4678b653c09f373864188452c23938a9b19", size = 55036, upload-time = "2026-11-02T12:06:19.495Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5b/5b/f6e86474f3ad5ef11f4aed569dde87411eed46b2d02bf31afcc33a0e3cf5/upstash_redis-1.9.0-py3-none-any.whl", hash = "sha256:81153171c427c13d454cc280b6a1d88f24ce25c82daee1d3ee64276d0558b20d", size = 57336, upload-time = "2026-11-02T12:06:18.212Z" },
 ]
 
 [[package]]

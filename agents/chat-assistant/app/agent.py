@@ -14,12 +14,15 @@
 # limitations under the License.
 
 import datetime
+import os
 from zoneinfo import ZoneInfo
 
 from google.adk.agents import Agent
 from google.adk.apps import App
 from google.adk.models import Gemini
 from google.genai import types
+
+from app.rate_limiter import UpstashRateLimitPlugin
 
 
 MODEL = "gemini-3.5-flash-lite"
@@ -72,7 +75,13 @@ root_agent = Agent(
     tools=[get_weather, get_current_time],
 )
 
+rate_limiter = UpstashRateLimitPlugin(
+    max_requests=int(os.getenv("RATE_LIMIT_MAX_REQUESTS", "5")),
+    window_seconds=int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60")),
+)
+
 app = App(
     root_agent=root_agent,
     name="app",
+    plugins=[rate_limiter],
 )

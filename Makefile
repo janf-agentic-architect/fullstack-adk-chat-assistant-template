@@ -3,9 +3,11 @@ REGION := us-east1
 INFRA_DIR := infra
 AGENT_DIR := agents/chat-assistant
 WEB_DIR := web
+CHANNELS_DIR := channels
+WHATSAPP_PORT := 8001
 TF_VARS := vars/env.tfvars
 
-.PHONY: help infra-init infra-plan infra sync-metadata sync-secrets deploy-agent deploy-web deploy-status deploy-all dev-agent dev-web rename
+.PHONY: help infra-init infra-plan infra sync-metadata sync-secrets deploy-agent deploy-web deploy-status deploy-all dev-agent dev-web dev-whatsapp tunnel-whatsapp dev-whatsapp-tunnel rename
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
@@ -67,6 +69,20 @@ dev-agent: ## Run local agent playground
 
 dev-web: ## Run web/ development server
 	cd $(WEB_DIR) && pnpm dev
+
+dev-whatsapp: ## Run WhatsApp webhook development server
+	cd $(CHANNELS_DIR) && uv run uvicorn whatsapp.main:app --host 0.0.0.0 --port $(WHATSAPP_PORT) --reload
+
+tunnel-whatsapp: ## Expose WhatsApp webhook port via ngrok
+	ngrok http $(WHATSAPP_PORT)
+
+dev-whatsapp-tunnel: ## Run WhatsApp webhook and expose via ngrok concurrently
+	@echo "Starting WhatsApp webhook server and ngrok tunnel on port $(WHATSAPP_PORT)..."; \
+	(cd $(CHANNELS_DIR) && uv run uvicorn whatsapp.main:app --host 0.0.0.0 --port $(WHATSAPP_PORT) --reload) & \
+	SERVER_PID=$$!; \
+	trap 'kill $$SERVER_PID 2>/dev/null || true' INT TERM EXIT; \
+	sleep 1; \
+	ngrok http $(WHATSAPP_PORT)
 
 rename: ## Rename the agent and web app (usage: make rename NAME=my-agent [WEB_NAME=my-web])
 	@if [ -z "$(NAME)" ]; then \

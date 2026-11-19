@@ -100,17 +100,24 @@ ADK_APP_NAME=chat_assistant
 
 ### 3. Iniciar los Servicios
 
+**Opción rápida con Make (inicia webhook + ngrok simultáneamente):**
+```bash
+make dev-whatsapp-tunnel
+```
+
+O por separado:
+- `make dev-whatsapp`: Inicia el servidor webhook en el puerto 8001.
+- `make tunnel-whatsapp`: Expone el puerto 8001 con ngrok.
+
 **Terminal 1: Iniciar el backend de ADK**
 ```bash
 # Desde la raíz del proyecto:
-uv run adk api_server
+uv run adk web . --host 127.0.0.1 --port 8080 --reload_agents
 ```
 
 **Terminal 2: Iniciar el canal de WhatsApp**
 ```bash
-# Desde el directorio channels:
-cd channels
-uv run uvicorn whatsapp.main:app --host 0.0.0.0 --port 8001 --reload
+make dev-whatsapp-tunnel
 ```
 
 ---

@@ -346,4 +346,4 @@ The agent is fully instrumented for enterprise monitoring:
 
 ## 📄 License
 
-This project is licensed under the Apache 2.0 License. See source file headers for details.
+This project is licensed under the MIT License. See source file headers for details.
